@@ -134,6 +134,8 @@ docker run --runtime=nvidia --gpus 8 \
     --security-opt seccomp=unconfined  \
     ...
 ```
+
+## Run the Demo
 Once you are in the docker container, pull this very GitHub repo. Run `bash pre.sh` to install dev libraries such as CuDNN.
 
 To build and run the demo, do:
@@ -148,5 +150,7 @@ To run the example, do
 mpirun -N 8 bash wrapper.sh <inset_correct_dir_here>/p2p_demo
 ```
 
-Please notice that this specific demo program runs communication within only one instance, among the local GPUs. You can change the communication pattern freely and communicate across machines, if you have a multi-machine cluster setup. MPI is required to correctly boot up the P2P feature, so always use `mpirun` to launch your distribtued jobs. Lastly but not least, please pay attention to `wrapper.sh`. It helps infer the EFA device name from the rank of a process and map it to env var `SMDATAPARALLEL_DEVICE_NAME`. This env var is needed by P2P to locate the correct net work card, aka EFA.
+Please refer to the comments in `main.cpp` for exaplainations of each step.
+
+Please notice that this specific demo program runs communication within only one instance, among the local GPUs. You can change the communication pattern freely and communicate across machines if you have a multi-machine cluster setup. MPI is required to correctly boot up the P2P feature, so always use `mpirun` to launch your distribtued jobs. Lastly but not least, please pay attention to `wrapper.sh`. It helps infer the EFA device name from the rank of a process and map it to env var `SMDATAPARALLEL_DEVICE_NAME`. This env var is needed by P2P to locate the correct network card, aka EFA.
 
