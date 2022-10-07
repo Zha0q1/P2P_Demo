@@ -12,7 +12,7 @@ void herringP2PRecv(int rank, void* buffer, void* mr, uint64_t length, int tenso
 void* herringP2PRegisterMemory(void* buff, int buff_len);      
 ```
 
-`herringP2PSend` and `herringP2PRecv` are the two core APIs we will be using. They are asynchronous in the sense that the caller is not blocked by the completion of communication. They require information about the `buffer` pointer (can be either CPU or GPU) and its `length`. Furthermore, `rank` specifies the other party that you would like to communicate with; data transport will happen if this other rank has a matching call with the `same tensor_id`. `context` is a field that the API caller can fully customize. `mr` refers to the memory registration struct returned by `herringP2PRegisterMemory`. All buffers need to be registered first to be able to be transported. You can ignore 'imm_data' for now.
+`herringP2PSend` and `herringP2PRecv` are the two core APIs we will be using. They are asynchronous in the sense that the caller is not blocked by the completion of communication. They require information about the `buffer` pointer (can be either CPU or GPU) and its `length`. Furthermore, `rank` specifies the other party that you would like to communicate with; data transport will happen if this other rank has a matching call with the `same tensor_id`. `context` is a field that the API caller can fully customize. `mr` refers to the memory registration struct returned by `herringP2PRegisterMemory`. All buffers need to be registered first to be able to be transported. You can ignore `imm_data` for now.
 
 ```
 struct CompletionEntry {
