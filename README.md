@@ -26,7 +26,7 @@ CompletionEntry herringP2PSendCompletion();
 ```
 All communication is async. We use the above struct and APIs to query the completion of communication requests. Note that `herringP2PReadCompletion` and `herringP2PSendCompletion` are blocking calls — they will return only when *some* communication request is done. The order that completion entries are returned does not depend on the order the communication requests are queued, but rather the order they are completed.
 
-**Failure to match the send/recv calls or query completion when there is none expected will lead to hangs.**
+**Failure to 1) match the send/recv calls or 2) query completion when there is none expected will lead to hangs.**
 
 
 ## Example DLC Image
