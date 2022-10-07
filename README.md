@@ -1,6 +1,33 @@
 # A Developer’s Guide to the P2P Feature in SageMaker Data Parallelism Package
 
 ## Overview
+In tensor and pipeline parallelism use case, we often need to send tensors directly from one rank to another. PyTorch’s [distributed package](https://pytorch.org/docs/stable/distributed.html) does not provide an easy and async API for this. SageMaker’s [Distributed Data Parallel Library](https://docs.aws.amazon.com/sagemaker/latest/dg/data-parallel-intro.html) fills in this gap by providing a set of intuitive P2P APIs in C++. In this demo, we will run you through the API specs, dev setup, and the demo itself.
+
+```
+void herringP2PSend(int rank, const void* buffer, void* mr, uint64_t length,
+          int tensor_id, const void* context, uint32_t imm_data);
+          
+void herringP2PRecv(int rank, void* buffer, void* mr, uint64_t length, int tensor_id,
+          const void* context, uint32_t imm_data);   
+void* herringP2PRegisterMemory(void* buff, int buff_len);      
+```
+
+`herringP2PSend` and `herringP2PRecv` are the two core APIs we will be using. They are asynchronous in the sense that the caller is not blocked by the completion of communication. They require information about the buffer pointer (either CPU or GPU) and its length. Furthermore, rank specifies the other party that you would like to communicate with; data transport will happen if this other rank has a matching call with the same tensor_id. context is a field that the API caller can fully customize. mr refers to the memory registration struct returned by `herringP2PRegisterMemory`. All buffers need to be registered first to be able to be transported. 
+
+```
+struct CompletionEntry {
+  const void *context;
+  uint32_t dst_rank;
+  uint32_t tensor_id;
+  herringP2PMessageErrorCode_t error_code;
+};
+CompletionEntry herringP2PReadCompletion();
+CompletionEntry herringP2PSendCompletion();
+```
+All communication is async. We use the above struct APIs to query the completion of communication requests. Note that `herringP2PReadCompletion` and `herringP2PSendCompletion` are blocking calls — they will return only when *some* communication request is done. The order that completion entries are returned does not depend on the order the communication requests are queued, but rather the order they are completed.
+
+**Failure to match the send/recv calls or query completion when there is none expected will lead to hangs.**
+
 
 ## Example DLC Image
 ```
