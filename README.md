@@ -112,9 +112,9 @@ p4d.24xlarge
 
 ## Dev Setup
 
-We recommend launchingp4d.24xlarge (https://aws.amazon.com/ec2/instance-types/p4/) instances on EC2 for development. Please notice that each p4d instance comes with 4 EFA (https://aws.amazon.com/hpc/efa/) network cards. Be sure to add enough network interfaces to expose all the EFA devices when you launch the instance. Also, when configuring multiple instances, please be sure to include them in the same subnet to enable inter-node communication.
+We recommend launching [p4d.24xlarge](https://aws.amazon.com/ec2/instance-types/p4/) instances on EC2 for development. Please note that each p4d instance comes with 4 [EFA](https://aws.amazon.com/hpc/efa/) network cards. Be sure to add enough network interfaces to expose all the EFA devices when you launch the instance. Also, when configuring multiple instances, please be sure to include them in the same subnet to enable inter-node communication.
 
-We also recommend our DLC PyTorch image in a dockerized environment. Be sure to expose the EFA devices accordingly:
+We also recommend running DLC PyTorch image in a dockerized environment. Be sure to expose the EFA devices accordingly:
 ```
 root@compute-dy-p4d24xlarge-1:/workspace/build# ls /dev/infiniband/
 rdma_cm  uverbs0  uverbs1  uverbs2  uverbs3
@@ -136,7 +136,7 @@ docker run --runtime=nvidia --gpus 8 \
 ```
 
 ## Run the Demo
-Once you are in the docker container, pull this very GitHub repo. Run `bash pre.sh` to install dev libraries such as CuDNN.
+Once you are in a docker container, pull this very GitHub repo. Run `bash pre.sh` to install dev libraries such as CuDNN.
 
 To build and run the demo, do:
 
@@ -152,5 +152,5 @@ mpirun -N 8 bash wrapper.sh <inset_correct_dir_here>/p2p_demo
 
 Please refer to the comments in `main.cpp` for exaplainations of each step.
 
-Please notice that this specific demo program runs communication within only one instance, among the local GPUs. You can change the communication pattern freely and communicate across machines if you have a multi-machine cluster setup. MPI is required to correctly boot up the P2P feature, so always use `mpirun` to launch your distribtued jobs. Lastly but not least, please pay attention to `wrapper.sh`. It helps infer the EFA device name from the rank of a process and map it to env var `SMDATAPARALLEL_DEVICE_NAME`. This env var is needed by P2P to locate the correct network card, aka EFA.
+Please note that this specific demo program runs communication only within one instance, among the local GPUs. You can change the communication pattern freely and communicate across machines if you have a multi-machine cluster setup. MPI is required to correctly boot up the P2P feature, so always use `mpirun` to launch your distribtued jobs. Lastly but not least, please pay attention to `wrapper.sh`. It helps infer the EFA device name from the rank of a process and map it to env var `SMDATAPARALLEL_DEVICE_NAME`. This env var is needed by P2P to locate the correct network card, aka EFA.
 
