@@ -112,9 +112,7 @@ p4d.24xlarge
 
 ## Dev Setup
 
-We recommend launching [p4d.24xlarge](https://aws.amazon.com/ec2/instance-types/p4/) instances on EC2 for development. Please note that each p4d instance comes with 4 [EFA](https://aws.amazon.com/hpc/efa/) network cards. Be sure to add enough network interfaces to expose all the EFA devices when you launch the instance. Also, when configuring multiple instances, please be sure to include them in the same subnet to enable inter-node communication.
-
-We also recommend running DLC PyTorch image in a dockerized environment. Be sure to expose the EFA devices accordingly:
+[p4d.24xlarge](https://aws.amazon.com/ec2/instance-types/p4/) instances are required to use the P2P feature. We recommend running DLC PyTorch image in a dockerized environment for development. Be sure to expose the EFA devices accordingly:
 ```
 root@compute-dy-p4d24xlarge-1:/workspace/build# ls /dev/infiniband/
 rdma_cm  uverbs0  uverbs1  uverbs2  uverbs3
